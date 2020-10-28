@@ -20,15 +20,18 @@ EditorBuildSettings:
   - enabled: 0
     path: Assets/AzureSpatialAnchors.Examples/Scenes/AzureSpatialAnchorsCoarseRelocDemo.unity
     guid: 215a1784376860644a66e82f3d383b85
-  - enabled: 1
+  - enabled: 0
     path: Assets/AzureSpatialAnchors.Examples/Scenes/MainSceneAchived.unity
     guid: 69358b1813691be44bb5408cc3834106
+  - enabled: 1
+    path: Assets/AzureSpatialAnchors.Examples/Scenes/MainScene.unity
+    guid: 4112edf3048b7164aa41f7984cd5a9fb
   - enabled: 1
     path: Assets/AzureSpatialAnchors.Examples/Scenes/GetNearbyAnchors.unity
     guid: e6196f7c2593b81489f266440b492441
   - enabled: 0
-    path: Assets/AzureSpatialAnchors.Examples/Scenes/OLDCreateAnchor.unity
-    guid: a63f9dd42f361ff4a9148a43e83d6230
+    path: 
+    guid: 00000000000000000000000000000000
   - enabled: 1
     path: Assets/AzureSpatialAnchors.Examples/Scenes/CreateAnchor.unity
     guid: ee984a981aec2ef47a1b98106a533782
