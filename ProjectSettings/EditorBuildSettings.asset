@@ -21,7 +21,7 @@ EditorBuildSettings:
     path: Assets/AzureSpatialAnchors.Examples/Scenes/AzureSpatialAnchorsCoarseRelocDemo.unity
     guid: 215a1784376860644a66e82f3d383b85
   - enabled: 1
-    path: Assets/AzureSpatialAnchors.Examples/Scenes/MainScene.unity
+    path: Assets/AzureSpatialAnchors.Examples/Scenes/MainSceneAchived.unity
     guid: 69358b1813691be44bb5408cc3834106
   - enabled: 1
     path: Assets/AzureSpatialAnchors.Examples/Scenes/GetNearbyAnchors.unity

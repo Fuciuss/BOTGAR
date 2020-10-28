@@ -6,6 +6,8 @@ using System.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.UI;
 
+using UnityEngine.XR.ARFoundation;
+
 namespace Microsoft.Azure.SpatialAnchors.Unity.Examples
 {
     public class GetNearbyAnchors : DemoScriptBase
@@ -89,7 +91,7 @@ namespace Microsoft.Azure.SpatialAnchors.Unity.Examples
                     {
                         feedbackBox.text = stateParams[_currentAppState].StepMessage;
                     }
-                    EnableCorrectUIControls();
+                    // EnableCorrectUIControls();
                 }
             }
         }
@@ -210,13 +212,36 @@ namespace Microsoft.Azure.SpatialAnchors.Unity.Examples
 
         protected Text debugText;
         protected Text anchorIDText;
+        protected Text planeVisualizerText;
+        protected Text scanText;
+        protected Text startText;
+        protected GameObject moveButton;
+        protected Text moveButtonText;
+        protected Image moveButtonImage;
+
+
+        public GameObject ARPlaneVisualizer;
+
+
 
         public override void Start()
         {
             Debug.Log(">>Azure Spatial Anchors Demo Script Start");
 
-
+            try {
+            anchorIDText = GameObject.Find("/UXParent/MobileUX/anchorIdText").GetComponent<Text>();
+            scanText = GameObject.Find("/UXParent/MobileUX/scanText").GetComponent<Text>();
             debugText = GameObject.Find("/UXParent/MobileUX/debugText").GetComponent<Text>();
+            planeVisualizerText = GameObject.Find("/UXParent/MobileUX/planeVisualizerText").GetComponent<Text>();
+            startText = GameObject.Find("/UXParent/MobileUX/startText").GetComponent<Text>();
+            moveButton = GameObject.Find("/UXParent/MobileUX/Button");
+            moveButtonText = GameObject.Find("/UXParent/MobileUX/moveButtonText").GetComponent<Text>();
+            // moveButtonImage = GameObject.Find("/UXParent/MobileUX/Button").GetComponent<Image>();
+            } catch (Exception e) {
+                debugText.text = e.ToString();
+            }
+
+
             debugText.text = "Get Nearby Anchors Script";
 
             base.Start();
@@ -231,7 +256,20 @@ namespace Microsoft.Azure.SpatialAnchors.Unity.Examples
 
             enableAdvancingOnSelect = false;
 
-            EnableCorrectUIControls();
+            // EnableCorrectUIControls();
+
+            
+
+            planeVisualizerText.text = currentAppState.ToString();
+
+            debugText.text = "finished start";
+
+            scanText.enabled = false;
+            // moveButton.enabled = true;
+            // moveButtonText.enabled = true;
+            // moveButtonImage.enabled = true;
+
+
         }
 
         protected override void OnCloudAnchorLocated(AnchorLocatedEventArgs args)
@@ -242,7 +280,7 @@ namespace Microsoft.Azure.SpatialAnchors.Unity.Examples
             //######### SOME DEBUGGING
             CloudSpatialAnchor currentCloudAnchor = args.Anchor;
             String currentAnchorId = currentCloudAnchor.Identifier;
-            debugText.text = ("ANCHOR LOCATED: " + currentAnchorId);
+            // debugText.text = ("ANCHOR LOCATED: " + currentAnchorId);
 
             anchorIDText.text = ("Located Anchor ID: " + currentAnchorId);
 
@@ -251,24 +289,37 @@ namespace Microsoft.Azure.SpatialAnchors.Unity.Examples
                 Debug.Log("args.Stats == LocateAnchorStatus.Located");
                 CloudSpatialAnchor cloudAnchor = args.Anchor;
 
-                debugText.text = "Pre Destroy Plane";
-                DestroyARPlane();
-                debugText.text = "Post Destroy Plane";
+                // debugText.text = "Pre Destroy Plane";
+                // debugText.text = "Post Destroy Plane";
 
                 UnityDispatcher.InvokeOnAppThread(() =>
                 {
                     currentAppState = AppState.DemoStepStopWatcher;
+                    debugText.text = "current state DemoStopWatcher";
                     Pose anchorPose = Pose.identity;
 
 #if UNITY_ANDROID || UNITY_IOS
                     anchorPose = currentCloudAnchor.GetPose();
 #endif
 
+                    debugText.text = "Spawning Anchor";
                     // HoloLens: The position will be set based on the unityARUserAnchor that was located.
                     GameObject spawnedObject = SpawnNewAnchoredObject(anchorPose.position, anchorPose.rotation, currentCloudAnchor);
                     allDiscoveredAnchors.Add(spawnedObject);
                 });
             }
+
+
+
+
+            // Despawn stuff from scene
+
+            planeVisualizerText.enabled = false;
+            debugText.enabled = false;
+            scanText.enabled = false;
+
+
+
         }
 
         public void OnApplicationFocus(bool focusStatus)
@@ -336,12 +387,29 @@ namespace Microsoft.Azure.SpatialAnchors.Unity.Examples
             base.OnSaveCloudAnchorFailed(exception);
         }
 
+
+        public void UpdateUISearch()
+        {
+            debugText.text = "Enabling scan text";
+            scanText.enabled = true;
+            startText.enabled = false;
+            moveButton.SetActive(false);
+            // moveButton.enabled = false;
+            // moveButtonText.enabled = false;
+            // moveButtonImage.enabled = false;
+            debugText.text = "closing ui update";
+        }
+
         public async override Task AdvanceDemoAsync()
         {
             switch (currentAppState)
             {
 
                 case AppState.CreateSessionState:
+
+
+                    planeVisualizerText.text = currentAppState.ToString();
+
 
                     debugText.text = "Creating Session";
                     //Create Session
@@ -351,6 +419,10 @@ namespace Microsoft.Azure.SpatialAnchors.Unity.Examples
                     }
                     currentCloudAnchor = null;
                     
+                    // scanText.enabled = true;
+                    // moveButton.enabled = false;
+
+                    UpdateUISearch();
 
                     debugText.text = "Configure Session";
                     //Config Session
@@ -376,10 +448,7 @@ namespace Microsoft.Azure.SpatialAnchors.Unity.Examples
                     // (placing the anchor with Air tap automatically advances the demo).
                     enableAdvancingOnSelect = true;
 
-                    currentAppState = AppState.QueryState;
-                    break;
 
-                case AppState.QueryState:
 
                     debugText.text = "Creating sessions for query";
                     //Create Session
@@ -396,25 +465,53 @@ namespace Microsoft.Azure.SpatialAnchors.Unity.Examples
                     //Looking for anchors
                     currentWatcher = CreateWatcher();
 
+                    debugText.text = "Trying to remove plane";
+                    RemoveARPlane();
 
+                    debugText.text = "Plane should be gone";
+
+
+                    currentAppState = AppState.QueryState;
 
                     currentAppState = AppState.DemoStepLookingForAnchorsNearDevice;
-                    break;
 
-                case AppState.DemoStepLookForAnchorsNearDevice:
-                    currentAppState = AppState.DemoStepLookingForAnchorsNearDevice;
-                    break;
-                case AppState.DemoStepLookingForAnchorsNearDevice:
-                    break;
-                case AppState.DemoStepStopWatcher:
-                    if (currentWatcher != null)
-                    {
-                        currentWatcher.Stop();
-                        currentWatcher = null;
-                    }
                     currentAppState = AppState.DemoStepStopSessionForQuery;
+                    planeVisualizerText.text = currentAppState.ToString();
+
+
+
+
+
+
                     break;
+
+
+
+
+                // case AppState.QueryState:
+                
+
+
+
+                //     break;
+
+                // case AppState.DemoStepLookForAnchorsNearDevice:
+                //     currentAppState = AppState.DemoStepLookingForAnchorsNearDevice;
+                //     break;
+                // case AppState.DemoStepLookingForAnchorsNearDevice:
+                //     break;
+                // case AppState.DemoStepStopWatcher:
+                //     if (currentWatcher != null)
+                //     {
+                //         currentWatcher.Stop();
+                //         currentWatcher = null;
+                //     }
+                //     currentAppState = AppState.DemoStepStopSessionForQuery;
+                //     break;
                 case AppState.DemoStepStopSessionForQuery:
+
+                    planeVisualizerText.text = currentAppState.ToString();
+
                     CloudManager.StopSession();
                     currentWatcher = null;
                     locationProvider = null;
@@ -431,13 +528,44 @@ namespace Microsoft.Azure.SpatialAnchors.Unity.Examples
             }
         }
 
-        public GameObject ARPlaneVisualizer;
-        public void DestroyARPlane()
+        public void RemoveARPlane()
         {
             // ARPlaneVisualizer.Destroy();
-            Destroy(ARPlaneVisualizer);
+            // Destroy(ARPlaneVisualizer);
+            // var meshRenderer = ARPlaneVisualizer.GetComponent<MeshRenderer>();
+
+            // meshRenderer.enabled = false;
+
+
+            // var lineRenderer = ARPlaneVisualizer.GetComponent<LineRenderer>();
+            // lineRenderer.enabled = false;
+
+
+            // var planeMeshVisualizerScript = ARPlaneVisualizer.GetComponent<ARPlaneMeshVisualizer>();
+
+            // planeMeshVisualizerScript.DisableComponents();
+
+
+            // var arPlane = ARPlaneVisualizer.GetComponent<ARPlane>();
+
+            // Destroy(arPlane);
+
+            // ARPlaneVisualizer.SetActive(false);
+            // planeVisualizerText.text = "check numero 2 (false): " + ARPlaneVisualizer.activeSelf.ToString();
+
+            // AR Plane Mesh Visualizer Script
+            // ARPlaneVisualizer.GetComponent<ARPlaneMeshVisualizer>().enabled = false;
+
+            // // // Line Renderer
+            // ARPlaneVisualizer.GetComponent<LineRenderer>().enabled = false;
+
+            // // // Mesh Renderer
+            // ARPlaneVisualizer.GetComponent<MeshRenderer>().enabled = false;
+
 
         }
+        
+
 
         public async override Task EnumerateAllNearbyAnchorsAsync()
         {

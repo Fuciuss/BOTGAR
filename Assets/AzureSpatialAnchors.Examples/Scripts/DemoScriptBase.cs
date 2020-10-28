@@ -165,7 +165,10 @@ namespace Microsoft.Azure.SpatialAnchors.Unity.Examples
             if (advanceDemoTask != null) { await advanceDemoTask; }
 
             // Return to the launcher scene
-            SceneManager.LoadScene(0);
+            // SceneManager.LoadScene(0);
+
+            string mainPath = "Assets/AzureSpatialAnchors.Examples/Scenes/MainScene.unity";
+            SceneManager.LoadScene(mainPath);
         }
 
         /// <summary>
@@ -235,6 +238,13 @@ namespace Microsoft.Azure.SpatialAnchors.Unity.Examples
 
         protected void SetNearDevice(float DistanceInMeters, int MaxAnchorsToFind)
         {
+
+            Debug.Log("#####################");
+            Debug.Log("DistanceInMeters: " + DistanceInMeters.ToString());
+            Debug.Log("MaxAnchorsToFind" + MaxAnchorsToFind.ToString());
+
+
+
             NearDeviceCriteria nearDeviceCriteria = new NearDeviceCriteria();
             nearDeviceCriteria.DistanceInMeters = DistanceInMeters;
             nearDeviceCriteria.MaxResultCount = MaxAnchorsToFind;
