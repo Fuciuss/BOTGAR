@@ -976,7 +976,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -36, y: -302}
+  m_AnchoredPosition: {x: -119, y: -116}
   m_SizeDelta: {x: 320, y: 60}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &735025436
@@ -2316,7 +2316,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -4, y: 241}
+  m_AnchoredPosition: {x: 293, y: -146}
   m_SizeDelta: {x: 400, y: 30}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1398656714
@@ -2548,7 +2548,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 512646c161338b94cbc0fd79239d520f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  anchoredObjectPrefab: {fileID: 1147623660883556, guid: 2934e1ce12aaee34682a1faed425a0bd,
+  anchoredObjectPrefab: {fileID: 1147623660883556, guid: ba7efe72a5b6d5c4ca6cf8ac4ead8b50,
     type: 3}
   cloudManager: {fileID: 1708978281}
   ARPlaneVisualizer: {fileID: 8151457777986619403, guid: fa7ba7bd95f0c8a43b88dae247dffee5,
